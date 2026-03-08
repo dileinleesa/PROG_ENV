@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROG_ENV - Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
+
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #c300ff;
+            --bg: #0a0a1f;
+            --card: #11111f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: #ddd;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(17, 17, 31, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-small {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px var(--neon-cyan));
+        }
+
+        .site-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav a {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #global-search {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 50px;
+            width: 260px;
+            font-size: 0.95rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            padding: 40px;
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        h3 {
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            font-size: 1.35rem;
+        }
+
+        /* Announcements */
+        .announcements .placeholder-line {
+            height: 14px;
+            background: #222;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+
+        .announce-text {
+            color: #0f0;
+            font-size: 1rem;
+            margin-top: 12px;
+        }
+
+        /* Daily Challenge */
+        .daily-challenge button {
+            margin-top: 16px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            color: #000;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            cursor: pointer;
+        }
+
+        /* Quick Links */
+        .quick-links button {
+            width: 100%;
+            padding: 16px;
+            margin: 10px 0;
+            background: #1a1a2e;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-links button:hover {
+            background: #00f3ff;
+            color: #000;
+            transform: scale(1.03);
+        }
+
+        /* Leaderboard */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .lb-row:last-child {
+            border: none;
+        }
+
+        .rank {
+            width: 28px;
+            height: 28px;
+            background: #222;
+            color: var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 9px;
+            background: #222;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar div {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+        }
+
+        /* Progress */
+        #progress-graph {
+            width: 100%;
+            max-width: 100%;
+            height: 160px;
+        }
+
+        .xp-badges {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 1.4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .dashboard-grid {
+                padding: 20px;
+                gap: 18px;
+            }
+        }
+
+        /* Floating AI Button */
+        .floating-ai-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .floating-ai-btn:hover {
+            transform: scale(1.1) rotate(12deg);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #11111f;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 520px;
+            border: 1px solid var(--neon-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-header">
+            <img src="logo.png" alt="PROG_ENV Logo" class="logo-small">
+            <span class="site-name">PROG_ENV</span>
+        </div>
+
+        <nav class="nav">
+            <a href="#" onclick="showSection('home')">Home</a>
+            <a href="#" onclick="showChallenges()">Challenges</a>
+            <a href="#" onclick="showCodingWars()">Coding Wars</a>
+            <a href="#" onclick="showProjects()">Projects</a>
+            <a href="#" onclick="showLearning()">Learning</a>
+            <a href="#" onclick="showResources()">Resources</a>
+        </nav>
+
+        <div class="header-right">
+            <input type="text" id="global-search" placeholder="Search friends or challenges..." onkeypress="if(event.key==='Enter') searchFriends()">
+            <button onclick="toggleAIChat()" class="icon-btn">🤖</button>
+            <button onclick="logout()" class="icon-btn">🚪</button>
+        </div>
+    </header>
+
+    <!-- MAIN GRID (exact same layout as your screenshot) -->
+    <div class="dashboard-grid">
+
+        <!-- Announcements -->
+        <div class="card announcements">
+            <h3>Announcements</h3>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line"></div>
+            <div class="placeholder-line"></div>
+            <p class="announce-text">🚀 New: JavaScript ES2026 challenges + Coding Wars league started!</p>
+        </div>
+
+        <!-- Daily Coding Challenge -->
+        <div class="card daily-challenge">
+            <h3>Daily Coding Challenge</h3>
+            <p style="margin-bottom:12px;">Today: Reverse a string without using built-in reverse()</p>
+            <button onclick="startDailyChallenge()">Start Challenge</button>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card quick-links">
+            <h3>Quick Links</h3>
+            <button onclick="submitProject()">↑ Submit Project</button>
+            <button onclick="searchFriends()">👥 Find Teammates</button>
+            <button onclick="openCodeEditor()">⟨⟩ Open Code Editor</button>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="card leaderboard">
+            <h3>Leaderboard</h3>
+            <div id="leaderboard-list"></div>
+            <button onclick="viewFullLeaderboard()" style="margin-top:16px; width:100%; padding:12px; background:#222; border:none; border-radius:12px; color:white; cursor:pointer;">View full leaderboard</button>
+        </div>
+
+        <!-- Your Progress -->
+        <div class="card progress">
+            <h3>Your Progress</h3>
+            <canvas id="progress-graph" width="320" height="160"></canvas>
+            <div class="xp-badges">
+                <div><span class="star">★</span> <strong id="user-xp">0</strong> XP</div>
+                <div><span class="star">🏅</span> <strong id="user-badges">0</strong> Badges</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FLOATING AI NPC BUTTON -->
+    <button onclick="toggleAIChat()" class="floating-ai-btn">🤖</button>
+
+    <!-- MODAL -->
+    <div id="modal" class="modal">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+
+    <script>
+        // Auto-redirect if not logged in
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'index.html';
+        }
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+        function renderDashboard() {
+            document.getElementById('user-xp').textContent = currentUser.xp || 1240;
+            document.getElementById('user-badges').textContent = currentUser.badges ? currentUser.badges.length : 3;
+
+            // Leaderboard (demo data)
+            const lbHTML = `
+                <div class="lb-row"><span class="rank">1</span> <span>alexcoder</span> <div class="progress-bar"><div style="width:92%"></div></div></div>
+                <div class="lb-row"><span class="rank">2</span> <span>leesa</span> <div class="progress-bar"><div style="width:78%"></div></div></div>
+                <div class="lb-row"><span class="rank">3</span> <span>you</span> <div class="progress-bar"><div style="width:65%"></div></div></div>
+            `;
+            document.getElementById('leaderboard-list').innerHTML = lbHTML;
+
+            // Progress graph
+            const canvas = document.getElementById('progress-graph');
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 5;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00f3ff';
+            ctx.beginPath();
+            ctx.moveTo(20, 130);
+            ctx.quadraticCurveTo(90, 40, 170, 100);
+            ctx.quadraticCurveTo(240, 25, 300, 80);
+            ctx.stroke();
+        }
+
+        function showModal(title, bodyHTML) {
+            document.getElementById('modal-content').innerHTML = `
+                <h3 style="color:#00f3ff; margin-bottom:20px;">${title}</h3>
+                ${bodyHTML}
+                <button onclick="closeModal()" style="margin-top:20px; padding:12px 30px; background:#333; color:white; border:none; border-radius:12px; cursor:pointer;">Close</button>
+            `;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        function startDailyChallenge() {
+            showModal('Daily Challenge', `
+                <p>Write a function to reverse any string.</p>
+                <textarea style="width:100%; height:140px; background:#1a1a2e; color:#0ff; padding:12px; border-radius:8px; font-family:monospace;">function reverse(str) { return str.split('').reverse().join(''); }</textarea>
+                <button onclick="submitChallenge()" style="margin-top:12px; width:100%; padding:14px; background:linear-gradient(90deg,#00f3ff,#c300ff); color:black; font-weight:bold; border:none; border-radius:12px;">Submit Solution</button>
+            `);
+        }
+
+        function submitChallenge() {
+            currentUser.xp = (currentUser.xp || 0) + 50;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeModal();
+            alert('✅ Solution accepted! +50 XP');
+            renderDashboard();
+        }
+
+        function openCodeEditor() {
+            showModal('Live Code Console', `
+                <textarea id="code-area" style="width:100%; height:200px; background:#0a0a1f; color:#0ff; padding:12px; font-family:monospace;">console.log("Welcome to PROG_ENV!");</textarea>
+                <button onclick="runCode()" style="margin-top:10px; width:100%; padding:14px; background:#00f3ff; color:black; font-weight:bold;">Run Code</button>
+                <pre id="output" style="margin-top:12px; background:#000; color:#0f0; padding:12px; border-radius:8px; min-height:60px;"></pre>
+            `);
+        }
+
+        function runCode() {
+            const code = document.getElementById('code-area').value;
+            const output = document.getElementById('output');
+            try {
+                const result = eval(code);
+                output.textContent = result !== undefined ? String(result) : 'Executed ✓';
+            } catch (e) {
+                output.textContent = 'Error: ' + e.message;
+            }
+        }
+
+        function submitProject() {
+            showModal('Submit Project', '<p>Your project has been uploaded successfully!<br>+120 XP awarded</p>');
+            currentUser.xp = (currentUser.xp || 0) + 120;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            renderDashboard();
+        }
+
+        function showCodingWars() {
+            showModal('Coding Wars', '<p>Live arena is open!<br>Click "Fight" to join a battle.</p><button onclick="startWar()" style="margin-top:15px; width:100%; padding:16px; background:#ff0044; color:white; border:none; border-radius:12px;">Fight Now</button>');
+        }
+
+        function startWar() {
+            closeModal();
+            setTimeout(() => {
+                currentUser.xp = (currentUser.xp || 0) + 85;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                alert('🏆 Victory! +85 XP');
+                renderDashboard();
+            }, 600);
+        }
+
+        function searchFriends() {
+            showModal('Find Teammates', '<p>Search results would appear here (demo).</p>');
+        }
+
+        function viewFullLeaderboard() {
+            showModal('Full Leaderboard', '<p>Top 50 coders listed here in real version.</p>');
+        }
+
+        function showChallenges() { showModal('Challenges', '<p>50+ daily & weekly challenges ready.</p>'); }
+        function showProjects() { showModal('Projects', '<p>Your submitted projects appear here.</p>'); }
+        function showLearning() { showModal('Learning', '<p>Interactive tutorials loading...</p>'); }
+        function showResources() { showModal('Resources', '<p>Cheat sheets, docs & templates.</p>'); }
+
+        function toggleAIChat() {
+            alert('AI Assistant opened! (Full floating chat ready in next version)');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function showSection(section) {
+            if (section === 'home') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // START THE DASHBOARD
+        renderDashboard();
+    </script>
+</body>
+</html>
